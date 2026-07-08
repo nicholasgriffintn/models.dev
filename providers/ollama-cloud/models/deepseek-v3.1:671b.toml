@@ -1,7 +1,9 @@
 name = "deepseek-v3.1:671b"
+description = "DeepSeek chat model for instruction following, coding, and analysis"
 family = "deepseek"
 attachment = false
 reasoning = true
+reasoning_options = [{ type = "toggle" }]
 tool_call = true
 release_date = "2025-08-21"
 last_updated = "2026-01-19"

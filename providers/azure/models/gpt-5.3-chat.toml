@@ -1,9 +1,11 @@
 name = "GPT-5.3 Chat"
+description = "Chat-tuned GPT model for conversational assistance, writing, and tool workflows"
 family = "gpt-codex"
 release_date = "2026-03-03"
 last_updated = "2026-03-03"
 attachment = true
 reasoning = true
+reasoning_options = [{ type = "effort", values = ["medium"] }]
 temperature = false
 knowledge = "2025-08-31"
 tool_call = true

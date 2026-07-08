@@ -1,7 +1,9 @@
 name = "minimax-m2.1"
+description = "MiniMax model for chat, coding, office work, and agentic tasks"
 family = "minimax"
 attachment = false
 reasoning = true
+reasoning_options = []
 tool_call = true
 release_date = "2025-12-23"
 last_updated = "2026-01-19"

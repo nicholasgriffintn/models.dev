@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { describeModel } from "../../describe.js";
 import type { ExistingModel, SyncProvider, SyncedModel } from "../index.js";
 
 const API_BASE = "https://api.x.ai/v1";
@@ -29,7 +30,7 @@ const XAIAPIKey = z.object({
   acls: z.array(z.string()),
 }).passthrough();
 
-type XAIModel = z.infer<typeof XAIModel>;
+export type XAIModel = z.infer<typeof XAIModel>;
 
 export const xai = {
   id: "xai",
@@ -87,7 +88,7 @@ export const xai = {
 
     return {
       id: model.id,
-      model: buildModel(model, existing),
+      model: buildXAIModel(model, existing),
     };
   },
 } satisfies SyncProvider<XAIModel>;
@@ -159,8 +160,9 @@ function cost(model: XAIModel, existing: ExistingModel) {
   };
 }
 
-function buildModel(model: XAIModel, existing: ExistingModel): SyncedModel {
+export function buildXAIModel(model: XAIModel, existing: ExistingModel): SyncedModel {
   const name = existing.name;
+  const description = existing.description;
   const attachment = existing.attachment;
   const reasoning = existing.reasoning;
   const toolCall = existing.tool_call;
@@ -187,12 +189,30 @@ function buildModel(model: XAIModel, existing: ExistingModel): SyncedModel {
   const created = dateFromTimestamp(model.created);
 
   return {
+    base_model: existing.base_model,
+    base_model_omit: existing.base_model_omit,
     name,
+    description: description ?? describeModel({
+      id: model.id,
+      name,
+      family: existing.family,
+      reasoning,
+      tool_call: toolCall,
+      structured_output: existing.structured_output,
+      open_weights: openWeights,
+      limit: {
+        input: limit.input,
+        context: model.max_prompt_length ?? limit.context,
+        output: limit.output,
+      },
+      modalities: { input, output },
+    }),
     family: existing.family,
     release_date: model.canonical_id === undefined ? created : releaseDate!,
     last_updated: model.canonical_id === undefined ? created : lastUpdated!,
     attachment: input.some((value) => value !== "text"),
     reasoning,
+    reasoning_options: existing.reasoning_options,
     temperature: existing.temperature,
     tool_call: toolCall,
     structured_output: existing.structured_output,
